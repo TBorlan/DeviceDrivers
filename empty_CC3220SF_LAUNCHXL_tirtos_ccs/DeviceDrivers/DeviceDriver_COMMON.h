@@ -19,6 +19,8 @@
 #include <ti/devices/cc32xx/driverlib/rom_map.h>
 #include <ti/devices/cc32xx/driverlib/uart.h>
 #include <ti/devices/cc32xx/driverlib/udma.h>
+#include <ti/devices/cc32xx/inc/hw_uart.h>
+
 
 #include <ti/sysbios/hal/Hwi.h>
 #include <ti/sysbios/BIOS.h>
@@ -31,5 +33,10 @@
 #include <stdint.h>
 
 enum StatusReturnCode { Return_OK };
+
+typedef struct DeviceDriver_Buffer_{
+    unsigned int size;
+    void *buffer;
+}DeviceDriver_Buffer,*DeviceDriver_Buffer_Handler;
 
 #endif /* DEVICEDRIVERS_DEVICEDRIVER_COMMON_H_ */
