@@ -27,7 +27,7 @@ enum StatusReturnCode DeviceDriver_UART_initHwAttr(DeviceDriver_UART_Handle hand
 
 }
 
-enum StatusReturnCode DeviceDriver_UART_init(DeviceDriver_UART_Handle handle,char rxbufffer[],char txbuffer[]){
+enum StatusReturnCode DeviceDriver_UART_init(DeviceDriver_UART_Handle handle,DeviceDriver_Buffer_Handler rxbufffer,DeviceDriver_Buffer_Handler txbuffer){
 
     // enable power
     switch(handle->HwAttrPtr->baseAddr){
@@ -130,7 +130,53 @@ enum StatusReturnCode DeviceDriver_UART_initUDMARxChAttr(DeviceDriver_UART_Handl
 
     channel->TransferMode = UDMA_MODE_BASIC;
 
+    channel->DataSize = UDMA_SIZE_8;
+
+    channel->SourceIncr = UDMA_SRC_INC_NONE;
+
+    channel->ArbitrationSize = UDMA_ARB_1;
+
+    channel->DestinationIncr = UDMA_DST_INC_8;
+
+    channel->SourcePtr = (void *)(handle->HwAttrPtr->baseAddr + UART_O_DR);
+
+    channel->DestinationPtr = handle->SwAttrPtr->rxBuffer->buffer;
+
+    channel->TransferItemCount = handle->SwAttrPtr->rxBuffer->size;
+
+    return Return_OK;
+
 }
+
+enum StatusReturnCode DeviceDriver_UART_initUDMATxChAttr(DeviceDriver_UART_Handle handle, DeviceDriver_UDMA_ChannelHandle channel){
+
+    if(handle->HwAttrPtr->baseAddr == UARTA0_BASE){
+        channel->ChannelID = UDMA_CH9_UARTA0_TX;
+    }
+    else{
+        channel->ChannelID = UDMA_CH11_UARTA1_TX;
+    }
+
+    channel->TransferMode = UDMA_MODE_BASIC;
+
+    channel->DataSize = UDMA_SIZE_8;
+
+    channel->ArbitrationSize = UDMA_ARB_1;
+
+    channel->DestinationIncr = UDMA_DST_INC_NONE;
+
+    channel->SourceIncr = UDMA_SRC_INC_8;
+
+    channel->SourcePtr = handle->SwAttrPtr->txBuffer->buffer;
+
+    channel->DestinationPtr = (void *)(handle->HwAttrPtr->baseAddr + UART_O_DR);
+
+    channel->TransferItemCount = handle->SwAttrPtr->txBuffer->size;
+
+    return Return_OK;
+
+}
+
 
 
 

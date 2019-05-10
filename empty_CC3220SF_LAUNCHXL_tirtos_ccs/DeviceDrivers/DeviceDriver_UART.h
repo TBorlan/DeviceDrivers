@@ -26,9 +26,10 @@ typedef struct DeviceDriver_UART_SwAttr_{
     bool Opened;
     unsigned int powerMngrId;
     bool enableCallback;
-    bool enableuDMA;
-    char *rxBuffer;
-    char *txBuffer;
+    bool enableTxuDMA;
+    bool enableRxuDMA;
+    DeviceDriver_Buffer_Handler rxBuffer;
+    DeviceDriver_Buffer_Handler txBuffer;
 
 
 }*DeviceDriver_UART_SwAttr;
@@ -42,7 +43,7 @@ typedef struct DeviceDriver_UART_Handle_{
 }*DeviceDriver_UART_Handle;
 
 
-enum StatusReturnCode DeviceDriver_UART_init(DeviceDriver_UART_Handle handle,char rxbufffer[],char txbuffer[]);
+enum StatusReturnCode DeviceDriver_UART_init(DeviceDriver_UART_Handle handle,DeviceDriver_Buffer_Handler rxbufffer,DeviceDriver_Buffer_Handler txbuffer);
 
 enum StatusReturnCode DeviceDriver_UART_initHwAttr(DeviceDriver_UART_Handle handle, CC3220SF_LAUNCHXL_UARTName name);
 
