@@ -59,4 +59,6 @@ enum StatusReturnCode DeviceDriver_UART_initUDMARxChAttr(DeviceDriver_UART_Handl
 
 enum StatusReturnCode DeviceDriver_UART_initUDMATxChAttr(DeviceDriver_UART_Handle handle, DeviceDriver_UDMA_ChannelHandle channel);
 
+enum StatusReturnCode DeviceDriver_UART_openUDMA(DeviceDriver_UART_Handle handle, DeviceDriver_UDMA_ChannelHandle channels[]);
+
 #endif /* DEVICEDRIVERS_DEVICEDRIVER_UART_H_ */

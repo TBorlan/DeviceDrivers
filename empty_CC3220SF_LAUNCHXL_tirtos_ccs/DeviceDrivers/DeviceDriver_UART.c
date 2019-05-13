@@ -72,6 +72,18 @@ enum StatusReturnCode DeviceDriver_UART_open(DeviceDriver_UART_Handle handle){
         UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
         UART_CONFIG_PAR_NONE);
 
+    unsigned int dmaFlags = 0;
+
+    if(handle->SwAttrPtr->enableRxuDMA){
+        dmaFlags = dmaFlags | UART_DMA_RX;
+    }
+    if(handle->SwAttrPtr->enableTxuDMA){
+        dmaFlags = dmaFlags | UART_DMA_TX;
+    }
+
+    MAP_UARTDMAEnable(handle->HwAttrPtr->baseAddr, dmaFlags);
+
+
     MAP_UARTEnable(handle->HwAttrPtr->baseAddr);
 
     return Return_OK;
@@ -102,6 +114,15 @@ enum StatusReturnCode DeviceDriver_UART_initHwInt(DeviceDriver_UART_Handle handl
 
     MAP_UARTFIFOLevelSet(handle->HwAttrPtr->baseAddr,FIFOlevels & (uint32_t)(0x07),FIFOlevels & (uint32_t)(0x38));
     MAP_UARTIntEnable(handle->HwAttrPtr->baseAddr,flags);
+    if(flags & UART_INT_DMATX){
+        handle->SwAttrPtr->enableTxuDMA = true;
+    }
+    else{
+        handle->SwAttrPtr->enableTxuDMA = false;
+    }
+    if(flags & UART_INT_DMARX){
+        handle->SwAttrPtr->enableRxuDMA = true;
+    }
     Hwi_enableInterrupt(handle->HwAttrPtr->intNum);
 
     return Return_OK;
