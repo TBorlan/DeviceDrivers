@@ -27,7 +27,6 @@ typedef struct DeviceDriver_UDMA_ChannelAttr_{
     unsigned int SourceIncr;
     unsigned int DestinationIncr;
     unsigned int DataSize;
-    unsigned int TransferItemCount;
 }DeviceDriver_UDMA_ChannelAttr,*DeviceDriver_UDMA_ChannelHandle;
 
 
