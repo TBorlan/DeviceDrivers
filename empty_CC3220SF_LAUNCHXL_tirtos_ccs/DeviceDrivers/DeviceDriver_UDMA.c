@@ -12,28 +12,31 @@
 
 #include "DeviceDriver_UDMA.h"
 
-extern tDMAControlTable dmaControlTable;
 
 
-enum StatusReturnCode DeviceDriver_UDMA_init(DeviceDriver_UDMA_Handle handle){
+struct DeviceDriver_UDMA_Handle_ udmaStruct = {NULL , false};
+
+DeviceDriver_UDMA_Handle udmaHandle = &udmaStruct;
+
+enum StatusReturnCode DeviceDriver_UDMA_init(){
 
     Power_setDependency(PowerCC32XX_PERIPH_UDMA);
 
     MAP_uDMAEnable();
 
-    MAP_uDMAControlBaseSet(handle->ControlTablePtr);
+    MAP_uDMAControlBaseSet(udmaHandle->ControlTablePtr);
 
-    handle->Enabled = true;
+    udmaHandle->Enabled = true;
 
     return Return_OK;
 
 }
 
-enum StatusReturnCode DeviceDriver_UDMA_initHwAttr(DeviceDriver_UDMA_Handle handle){
+enum StatusReturnCode DeviceDriver_UDMA_initHwAttr(){
 
-    handle->Enabled = false;
+    udmaHandle->Enabled = false;
 
-    handle->ControlTablePtr = &dmaControlTable;
+    udmaHandle->ControlTablePtr = &udmaControlTable;
 
     return Return_OK;
 

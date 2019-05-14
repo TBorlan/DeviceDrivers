@@ -17,6 +17,8 @@ typedef struct DeviceDriver_UDMA_Handle_{
     bool Enabled;
 }*DeviceDriver_UDMA_Handle;
 
+extern tDMAControlTable udmaControlTable;
+extern DeviceDriver_UDMA_Handle udmaHandle;
 
 typedef struct DeviceDriver_UDMA_ChannelAttr_{
     unsigned int ChannelID;
@@ -31,9 +33,9 @@ typedef struct DeviceDriver_UDMA_ChannelAttr_{
 }DeviceDriver_UDMA_ChannelAttr,*DeviceDriver_UDMA_ChannelHandle;
 
 
-enum StatusReturnCode DeviceDriver_UDMA_initHwAttr(DeviceDriver_UDMA_Handle handle);
+enum StatusReturnCode DeviceDriver_UDMA_initHwAttr();
 
-enum StatusReturnCode DeviceDriver_UDMA_init(DeviceDriver_UDMA_Handle handle);
+enum StatusReturnCode DeviceDriver_UDMA_init();
 
 
 

@@ -198,7 +198,28 @@ enum StatusReturnCode DeviceDriver_UART_initUDMATxChAttr(DeviceDriver_UART_Handl
 
 }
 
+enum StatusReturnCode DeviceDriver_UART_openUDMAChannel(DeviceDriver_UART_Handle handle, DeviceDriver_UDMA_ChannelHandle channel){
 
+    if(!udmaHandle->Enabled){
+
+        DeviceDriver_UDMA_init();
+
+    }
+    MAP_uDMAChannelAssign(channel->ChannelID);
+    MAP_uDMAChannelControlSet(channel->ChannelID, channel->DataSize |
+                                                  channel->ArbitrationSize |
+                                                  channel->DestinationIncr |
+                                                  channel->SourceIncr);
+
+    MAP_uDMAChannelTransferSet(channel->ChannelID, channel->TransferMode,
+                                               channel->SourcePtr,
+                                               channel->DestinationPtr,
+                                               channel->TransferItemCount);
+    MAP_uDMAChannelEnable(channel->ChannelID);
+
+    return Return_OK;
+
+}
 
 
 
