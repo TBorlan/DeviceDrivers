@@ -17,8 +17,7 @@ typedef struct DeviceDriver_UDMA_Handle_{
     bool Enabled;
 }*DeviceDriver_UDMA_Handle;
 
-extern tDMAControlTable udmaControlTable;
-extern DeviceDriver_UDMA_Handle udmaHandle;
+
 
 typedef struct DeviceDriver_UDMA_ChannelAttr_{
     unsigned int ChannelID;

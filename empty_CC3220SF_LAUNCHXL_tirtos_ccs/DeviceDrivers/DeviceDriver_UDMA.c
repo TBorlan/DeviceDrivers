@@ -12,7 +12,7 @@
 
 #include "DeviceDriver_UDMA.h"
 
-
+static tDMAControlTable dmaControlTable[64] __attribute__ ((aligned (1024)));
 
 struct DeviceDriver_UDMA_Handle_ udmaStruct = {NULL , false};
 
@@ -36,7 +36,7 @@ enum StatusReturnCode DeviceDriver_UDMA_initHwAttr(){
 
     udmaHandle->Enabled = false;
 
-    udmaHandle->ControlTablePtr = &udmaControlTable;
+    udmaHandle->ControlTablePtr = &dmaControlTable;
 
     return Return_OK;
 

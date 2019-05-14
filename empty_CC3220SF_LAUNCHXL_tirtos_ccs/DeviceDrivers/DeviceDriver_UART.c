@@ -13,6 +13,7 @@
 #include "DeviceDriver_UART.h"
 
 extern UARTCC32XX_HWAttrsV1 uartCC3220SHWAttrs[CC3220SF_LAUNCHXL_UARTCOUNT];
+extern DeviceDriver_UDMA_Handle udmaHandle;
 
 
 

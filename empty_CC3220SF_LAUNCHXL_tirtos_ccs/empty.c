@@ -50,6 +50,7 @@
 #include "Board.h"
 
 #include <DeviceDrivers/DeviceDriver_UART.h>
+# include <DeviceDrivers/DeviceDriver_UDMA.h>
 
 #include <CC3220SF_LAUNCHXL.h>
 
@@ -70,6 +71,12 @@ void *mainThread(void *arg0){
 
     struct DeviceDriver_UART_SwAttr_ UART_SWATTR_STRUCT;
 
+    unsigned short txlength = 10;
+
+    char tx[10]="\n ceva tare";
+
+    DeviceDriver_Buffer txBuffer = {txlength, tx};
+
     DeviceDriver_UART_Handle UART0_Handle = &UART_HANDLE_STRUCT;
 
     UART0_Handle->HwIntPtr = &UART_HWINT_STRUCT;
@@ -80,6 +87,9 @@ void *mainThread(void *arg0){
 
     DeviceDriver_UART_initHwAttr(UART0_Handle, CC3220SF_LAUNCHXL_UART0);
 
+    DeviceDriver_UDMA_initHwAttr();
+
+    DeviceDriver_UDMA_init();
 
     DeviceDriver_UART_initCallbackFunc(UART0_Handle);
 
