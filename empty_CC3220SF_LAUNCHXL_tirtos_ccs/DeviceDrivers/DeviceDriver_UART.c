@@ -75,10 +75,10 @@ enum StatusReturnCode DeviceDriver_UART_open(DeviceDriver_UART_Handle handle){
 
     unsigned int dmaFlags = 0;
 
-    if(handle->SwAttrPtr->enableRxuDMA){
+    if(handle->SwAttrPtr->enableRxuDMA == true){
         dmaFlags = dmaFlags | UART_DMA_RX;
     }
-    if(handle->SwAttrPtr->enableTxuDMA){
+    if(handle->SwAttrPtr->enableTxuDMA == true){
         dmaFlags = dmaFlags | UART_DMA_TX;
     }
 
