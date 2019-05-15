@@ -16,10 +16,19 @@ extern UARTCC32XX_HWAttrsV1 uartCC3220SHWAttrs[CC3220SF_LAUNCHXL_UARTCOUNT];
 extern DeviceDriver_UDMA_Handle udmaHandle;
 
 
-
-
-
-
+//*****************************************************************************
+//
+//! Assigns a hardware structure to the handle
+//!
+//! \param handle to be initialized
+//! \param name is one field of enum "CC3220SF_LAUNCHXL_UARTName"
+//!
+//! This function should be called prior to every other function that uses an UART handle.
+//! It should not be used to reconfigure an already configured handle.
+//!
+//! \return Returns StatusReturnCode field member
+//
+//*****************************************************************************
 enum StatusReturnCode DeviceDriver_UART_initHwAttr(DeviceDriver_UART_Handle handle, CC3220SF_LAUNCHXL_UARTName name){
 
     handle->HwAttrPtr = &uartCC3220SHWAttrs[name];
@@ -28,6 +37,19 @@ enum StatusReturnCode DeviceDriver_UART_initHwAttr(DeviceDriver_UART_Handle hand
 
 }
 
+//*****************************************************************************
+//
+//! Initialize UART specified by its handle
+//!
+//! \param handle to be initialized
+//! \param rxbufffer to be used by UART
+//! \param txbuffer to be used by UART
+//!
+//! Powers on an UART peripheral, assigns tx and rx buffers and muxex GPIO pins to UART
+//!
+//! \return Returns StatusReturnCode field member
+//
+//*****************************************************************************
 enum StatusReturnCode DeviceDriver_UART_init(DeviceDriver_UART_Handle handle,DeviceDriver_Buffer_Handler rxbufffer,DeviceDriver_Buffer_Handler txbuffer){
 
     // enable power
@@ -59,6 +81,18 @@ enum StatusReturnCode DeviceDriver_UART_init(DeviceDriver_UART_Handle handle,Dev
 
 }
 
+//*****************************************************************************
+//
+//! Starts the UART Peripheral
+//!
+//! \param handle of UART peripheral
+//!
+//! Sets the UART clock for generating the required baudrate
+//! and enables UART peripheral
+//!
+//! \return Returns StatusReturnCode field member
+//
+//*****************************************************************************
 enum StatusReturnCode DeviceDriver_UART_open(DeviceDriver_UART_Handle handle){
 
     MAP_UARTIntClear(handle->HwAttrPtr->baseAddr, UART_INT_TX | UART_INT_RX |
@@ -91,6 +125,19 @@ enum StatusReturnCode DeviceDriver_UART_open(DeviceDriver_UART_Handle handle){
 
 }
 
+//*****************************************************************************
+//
+//! Creates a TI-RTOS Hardware Interrupt for UART
+//!
+//! \param handle which holds necessary information
+//!
+//! This function creates a TI-RTOS Hardware Interrupt using information pointed by the UART handle.
+//! This function should be called prior to initializing the UART interrupt sources.
+//! This function doesn't enable the TI-RTOS Hardware Interrupt, only creates it
+//!
+//! \return Returns StatusReturnCode field member
+//
+//*****************************************************************************
 enum StatusReturnCode DeviceDriver_UART_initCallbackFunc(DeviceDriver_UART_Handle handle){
 
     Hwi_Params_init(&(handle->HwIntPtr->TIRTOSHwIntParamsVar));
@@ -110,8 +157,23 @@ enum StatusReturnCode DeviceDriver_UART_initCallbackFunc(DeviceDriver_UART_Handl
 }
 
 
-
+//*****************************************************************************
+//
+//! Configures and enables interrput sources for a specific UART
+//!
+//! \param handle which points to the UART peripheral
+//! \param flags is the logical OR of the interrupt sources
+//! \param FIFOlevels is the logical OR of the FIFO thresholds for Rx and Tx FIFOs
+//!
+//! This function enables UART interrupt sources specified as ORed values from uart.h file.
+//! It also sets the UARt FIFO level triggers passed as ORed values, as specified in uart.h.
+//! This function should only be called after DeviceDriver_UART_initCallbackFunc.
+//!
+//! \return Returns StatusReturnCode field member
+//
+//*****************************************************************************
 enum StatusReturnCode DeviceDriver_UART_initHwInt(DeviceDriver_UART_Handle handle, uint32_t flags, uint32_t FIFOlevels){
+
 
     MAP_UARTFIFOLevelSet(handle->HwAttrPtr->baseAddr,FIFOlevels & (uint32_t)(0x07),FIFOlevels & (uint32_t)(0x38));
     MAP_UARTIntEnable(handle->HwAttrPtr->baseAddr,flags);
@@ -141,6 +203,23 @@ void DeviceDriver_UART_readEcho(DeviceDriver_UART_Handle handle){
     MAP_UARTCharPutNonBlocking(handle->HwAttrPtr->baseAddr, (char) character + 1);
 }
 
+//*****************************************************************************
+//
+//! Initialize a configuration structure for UDMA Rx channel
+//!
+//! \param handle which points to the UART peripheral
+//! \param channel structure to be initialized
+//!
+//! The channel structure is configured as follows:
+//! *Basic Transfer Mode
+//! *Channel ID selected as per handle specification
+//! *Destination and Transfer size specified as per Rx buffer bound to the handler
+//! *Data size of 8 bits
+//! *Arbitration size of 1 element
+//!
+//! \return Returns StatusReturnCode field member
+//
+//*****************************************************************************
 enum StatusReturnCode DeviceDriver_UART_initUDMARxChAttr(DeviceDriver_UART_Handle handle, DeviceDriver_UDMA_ChannelHandle channel){
 
     if(handle->HwAttrPtr->baseAddr == UARTA0_BASE){
@@ -170,6 +249,23 @@ enum StatusReturnCode DeviceDriver_UART_initUDMARxChAttr(DeviceDriver_UART_Handl
 
 }
 
+//*****************************************************************************
+//
+//! Initialize a configuration structure for UDMA Tx channel
+//!
+//! \param handle which points to the UART peripheral
+//! \param channel structure to be initialized
+//!
+//! The channel structure is configured as follows:
+//! *Basic Transfer Mode
+//! *Channel ID selected as per handle specification
+//! *Source and Transfer size specified as per Rx buffer bound to the handler
+//! *Data size of 8 bits
+//! *Arbitration size of 1 element
+//!
+//! \return Returns StatusReturnCode field member
+//
+//*****************************************************************************
 enum StatusReturnCode DeviceDriver_UART_initUDMATxChAttr(DeviceDriver_UART_Handle handle, DeviceDriver_UDMA_ChannelHandle channel){
 
     if(handle->HwAttrPtr->baseAddr == UARTA0_BASE){
@@ -199,7 +295,16 @@ enum StatusReturnCode DeviceDriver_UART_initUDMATxChAttr(DeviceDriver_UART_Handl
 
 }
 
-enum StatusReturnCode DeviceDriver_UART_openUDMAChannel(DeviceDriver_UART_Handle handle, DeviceDriver_UDMA_ChannelHandle channel){
+//*****************************************************************************
+//
+//! Configures and enables a uDMA channel for UART
+//!
+//! \param channel structure containing configuration information
+//!
+//! \return Returns StatusReturnCode field member
+//
+//*****************************************************************************
+enum StatusReturnCode DeviceDriver_UART_openUDMAChannel(DeviceDriver_UDMA_ChannelHandle channel){
 
     if(!udmaHandle->Enabled){
 
