@@ -218,7 +218,7 @@ void DeviceDriver_UART_readEcho(DeviceDriver_UART_Handle handle){
 //! *Arbitration size of 1 element
 //!
 //! \return Returns StatusReturnCode field member
-//
+//2) Answer or reject to the call => On HMI remain the screen with `incoming call process` (see marker 000 and 001)
 //*****************************************************************************
 enum StatusReturnCode DeviceDriver_UART_initUDMARxChAttr(DeviceDriver_UART_Handle handle, DeviceDriver_UDMA_ChannelHandle channel){
 
@@ -329,4 +329,43 @@ enum StatusReturnCode DeviceDriver_UART_openUDMAChannel(DeviceDriver_UDMA_Channe
 
 
 
+#ifdef DEVICEDRIVER_ENABLELOGGING
+
+static char primaryBuffer[1024];
+static char alternativeBuffer[1024];
+
+static volatile enum {Primary_Select, Alternate_Select} activeBuffer;
+
+static const DeviceDriver_UDMA_ChannelAttr primaryChannel = { UDMA_CH9_UARTA0_TX | UDMA_PRI_SELECT,
+                                                              UDMA_MODE_AUTO,
+                                                              primaryBuffer,
+                                                              UARTA0_BASE + UART_O_DR,
+                                                              UDMA_ARB_1,
+                                                              UDMA_SRC_INC_8,
+                                                              UDMA_DST_INC_NONE,
+                                                              UDMA_SIZE_8,
+                                                              1023
+                                                            };
+
+static const DeviceDriver_UDMA_ChannelAttr alternateChannel = { UDMA_CH9_UARTA0_TX | UDMA_ATTR_ALTSELECT,
+                                                              UDMA_MODE_AUTO,
+                                                              alternativeBuffer,
+                                                              UARTA0_BASE + UART_O_DR,
+                                                              UDMA_ARB_1,
+                                                              UDMA_SRC_INC_8,
+                                                              UDMA_DST_INC_NONE,
+                                                              UDMA_SIZE_8,
+                                                              1023
+                                                            };
+
+
+
+
+
 #endif
+
+
+
+#endif
+
+
