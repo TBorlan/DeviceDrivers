@@ -331,8 +331,7 @@ enum StatusReturnCode DeviceDriver_UART_openUDMAChannel(DeviceDriver_UDMA_Channe
 
 #ifdef DEVICEDRIVER_ENABLELOGGING
 
-static char primaryBuffer[1024];
-static char alternativeBuffer[1024];
+static char buffer[2][1024];
 
 static volatile enum {Primary_Select, Alternate_Select} activeBuffer;
 
@@ -358,8 +357,49 @@ static const DeviceDriver_UDMA_ChannelAttr alternateChannel = { UDMA_CH9_UARTA0_
                                                               1023
                                                             };
 
+enum StatusReturnCode DeviceDriver_UART_setupLogging(){
+
+    for (int i = 0; i < 1024; i++){
+        primaryBuffer[i] = 0;
+    }
+    activeBuffer = Primary_Select;
+
+    return Return_OK;
+
+}
+
+void void DeviceDriver_Log(char tag[], char message[]){
+    static unsigned short len;
+    if (buffer[activeBuffer][0] == 0){
+        len = 0;
+    }
+    int i = 0;
+    int j = 0;
+    while(tag[i] != 0 && message[j] != 0){
+        if(tag[i] != 0){
+            i++;
+        }
+        if(message[j] != 0){
+            j++;
+        }
+    }
+    unsigned short newlen = i + j + 1;
+    if(1024 - len > newlen){
+        buffer[activeBuffer][len] = '/r';
+        buffer[activeBuffer][len +1] = '/n';
+        len = len + 2;
+        for(int k = 0; k < i -1; k++){
+            buffer[activeBuffer][len + k] = tag[k];
+        }
+        buffer[activeBuffer][len + k + 1] = '/t';
+        len = len + i;
 
 
+    }
+
+
+
+}
 
 
 #endif
